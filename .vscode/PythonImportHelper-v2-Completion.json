@@ -1,0 +1,90 @@
+[
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "pyodbc",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pyodbc",
+        "description": "pyodbc",
+        "detail": "pyodbc",
+        "documentation": {}
+    },
+    {
+        "label": "QService",
+        "importPath": "services.llm_service",
+        "description": "services.llm_service",
+        "isExtraImport": true,
+        "detail": "services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "SQLServerDatabase",
+        "importPath": "services.sql_server_database",
+        "description": "services.sql_server_database",
+        "isExtraImport": true,
+        "detail": "services.sql_server_database",
+        "documentation": {}
+    },
+    {
+        "label": "QService",
+        "kind": 6,
+        "importPath": "services.llm_service",
+        "description": "services.llm_service",
+        "peekOfCode": "class QService:\n    #BASE_URL = \"https://qwen-qwen2-5-1m-demo.hf.space\"\n    BASE_URL = \"https://qwen-qwq-32b-preview.hf.space\"\n    def __init__(self, session_hash):\n        self.session_hash = session_hash\n    def predict(self, text):\n        url = f\"{self.BASE_URL}/run/predict?__theme=system\"\n        headers = {\n            \"Content-Type\": \"application/json\",\n            \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36\",",
+        "detail": "services.llm_service",
+        "documentation": {}
+    },
+    {
+        "label": "SQLServerDatabase",
+        "kind": 6,
+        "importPath": "services.sql_server_database",
+        "description": "services.sql_server_database",
+        "peekOfCode": "class SQLServerDatabase:\n    def __init__(self, server, database, username, password):\n        self.connection_string = (\n            f\"DRIVER={{ODBC Driver 17 for SQL Server}};\"\n            f\"SERVER={server};DATABASE={database};UID={username};PWD={password}\"\n        )\n        self.connection = None\n    def connect(self):\n        try:\n            self.connection = pyodbc.connect(self.connection_string)",
+        "detail": "services.sql_server_database",
+        "documentation": {}
+    },
+    {
+        "label": "ContentDatabase",
+        "kind": 6,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "class ContentDatabase:\n    def __init__(self, server, database, username, password):\n        self.db = SQLServerDatabase(server, database, username, password)\n    def connect(self):\n        self.db.connect()\n    def disconnect(self):\n        self.db.disconnect()\n    def get_purecontent_without_description(self):\n        query = \"SELECT Id, Title FROM dbo.TblPureContent  WHERE Description IS NULL OR ContentCategoryId IS NULL\"\n        return self.db.select(query)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "ContentManager",
+        "kind": 6,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "class ContentManager:\n    def __init__(self, session_hash, db_instance):\n        self.q_service = QService(session_hash)\n        self.db = db_instance\n    def process_categories(self):\n        self.db.connect()\n        categories = self.db.get_category()\n        for category in categories:\n            print(category[0])\n        self.db.disconnect()",
+        "detail": "main",
+        "documentation": {}
+    }
+]
