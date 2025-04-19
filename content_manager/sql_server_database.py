@@ -46,20 +46,20 @@ class SQLServerDatabase:
         finally:
             cursor.close()
 
-    def select(self, query):
+    def select(self, query, params=None):
         """اجرای کوئری SELECT و بازگشت نتایج"""
-        return self._execute_query(query, fetch=True)
+        return self._execute_query(query, params=params, fetch=True)
 
-    def insert_and_get_id(self, insert_query):
+    def insert_and_get_id(self, insert_query, params=None):
         """اجرای کوئری INSERT و بازگشت شناسه رکورد وارد شده"""
-        self._execute_query(insert_query, fetch=False)
+        self._execute_query(insert_query, params=params, fetch=False)
         query = "SELECT SCOPE_IDENTITY();"
         result = self.select(query)
         return result[0][0] if result else None
 
     def update(self, query, params=None):
         """اجرای کوئری UPDATE"""
-        self._execute_query(query, params)
+        self._execute_query(query, params=params)
 
     def check_connection(self):
         """بررسی وضعیت اتصال"""
@@ -109,4 +109,20 @@ class SQLServerDatabase:
             set_clause = ", ".join(set_clauses)
             query = f"UPDATE pure_content SET {set_clause} WHERE id = ?"
             params.append(content_id)
-            self.update(query, tuple(params))
+            self.update(query, params=params)
+
+    def insert_category(self, category_name):
+        """اضافه کردن یک دسته‌بندی جدید و بازگشت شناسه آن"""
+        query = "INSERT INTO categories (title) VALUES (?)"
+        return self.insert_and_get_id(query, params=[category_name])
+
+    def get_all_purecontents(self):
+        """دریافت همه محتوای (عنوان و توضیحات و دسته‌بندی) که نیاز به به‌روزرسانی دارند"""
+        query = """
+        SELECT id, title, description, content_category_id
+        FROM pure_content
+        WHERE title IS NULL OR title = ''
+           OR description IS NULL OR description = ''
+           OR content_category_id IS NULL
+        """
+        return self.select(query)

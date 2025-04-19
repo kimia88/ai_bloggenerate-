@@ -1,33 +1,23 @@
 class PromptService:
-    def title_generator_prompt(self, description):
-        return f"""
-        Create a concise, engaging title (maximum 100 characters) that accurately represents the following content.
-        Provide only the title text without any additional formatting, explanations, or quotation marks.
+    def complete_content_prompt(self, title=None, description=None):
+        prompt = """Complete the following content data. Fill in any missing fields and return ONLY a valid JSON like this:
 
-        Content: {description}
+{
+    "Title": "string",
+    "Description": "string",
+    "Category": "string"
+}
 
-        Requirements:
-        - Maximum 100 characters
-        - Clear and descriptive
-        - No introductory phrases
-        - No quotation marks
-        - Just the title text
-        """
+Requirements:
+- If a field already exists, keep it unchanged.
+- Fill in the missing fields based on the available ones.
+- Do NOT include any explanation, markdown, or formatting.
+- Return ONLY the JSON object.
 
-    def prompt_generator(self, title):
-        return f"""
-        Provide the response in EXACTLY this JSON format with NO other text:
-        {{
-            "Title": "string",
-            "Description": "string",
-            "Category": "string"
-        }}
-    
-        Title: {title}
-    
-        Requirements:
-        - Only output the JSON object
-        - No additional commentary
-        - No markdown formatting
-        - No code blocks
-        """
+"""
+        if title:
+            prompt += f"Title: {title}\n"
+        if description:
+            prompt += f"Description: {description}\n"
+
+        return prompt.strip()

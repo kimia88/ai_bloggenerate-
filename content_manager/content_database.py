@@ -53,3 +53,11 @@ class ContentDatabase:
         '''
         self.db.update(update_query, (title, description, content_category_id, content_id))
         return True
+
+    def get_all_purecontents(self):
+        """دریافت تمامی محتواها (با عنوان، توضیحات و دسته‌بندی)"""
+        query = """
+            SELECT Id, Title, Description, ContentCategoryId
+            FROM dbo.TblPureContent
+        """
+        return self.db.select(query)
